@@ -16,3 +16,13 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+//
+// TODO: Need auth middleware (?)
+//
+
+Route::resources([
+    'products' => 'ProductsController',
+    'reviews' => 'ReviewsController',
+]);
+
