@@ -13,10 +13,6 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 // Product routes
 Route::get('products', 'ProductsController@listProducts');
 Route::get('products/{productId}', 'ProductsController@getProduct');
@@ -31,9 +27,9 @@ Route::post('products/{productId}/reviews', 'ReviewsController@createReview');
 Route::put('products/{productId}/reviews/{reviewId}', 'ReviewsController@updateReview');
 Route::delete('products/{productId}/reviews/{reviewId}', 'ReviewsController@deleteReview');
 
-//Route::resources([
-//    'products' => 'ProductsController',
-//    'reviews' => 'ReviewsController',
-//]);
+
+//Route::middleware('auth:api')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
 
 
