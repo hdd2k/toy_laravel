@@ -1,99 +1,82 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
-
-//
-// Doc : https://laravel.com/docs/5.5/eloquent#inserting-and-updating-models
-//
-
-
-
-// Use Eloquent ORM
+use App\Http\Requests\CreateProductRequest;
+use App\Http\Requests\UpdateProductRequest;
+use App\Http\Requests\DeleteProductRequest;
+use Core\ProductCreator;
+use Core\ProductModifier;
+use Core\ProductRetriever;
+use \Illuminate\Support\Facades\DB;
+use Exception;
 use App\Product;
-use App\Review;
+use Illuminate\Http\Response;
 
 class ProductsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function listProducts()
     {
-        return Product::all();
+        $products = Product::all();
+
+        return response($products);
+
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function createProduct(CreateProductRequest $request, ProductCreator $creator)
     {
-        return __METHOD__;
+        $dto = $request->getProductDto();
+
+        DB::beginTransaction();
+        try {
+            $product = $creator->createProduct($dto);
+            $product->save();
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
+        return response($product, Response::HTTP_CREATED);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function getProduct($productId)
     {
-        return Product::create([
-            'name' => $request->name,
-        ]);
+        $prod = Product::find($productId);
+
+        return response($prod);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function updateProduct(UpdateProductRequest $request, ProductRetriever $retriever, ProductModifier $modifier, int $productId)
     {
-        return Product::find($id);
+        $product = $retriever->retrieveById($productId);
+        $dto = $request->getProductDto();
+
+        DB::beginTransaction();
+        try {
+            $modifier->modifyProduct($product, $dto);
+            $product->save();
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
+        return response($product);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function deleteProduct(DeleteProductRequest $request, ProductRetriever $retriever, int $productId)
     {
-        //
-        return __METHOD__ . $id;
-    }
+        $product = $retriever->retrieveById($productId);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-        return __METHOD__ . $id;
-    }
+        DB::beginTransaction();
+        try {
+            $product->delete();
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-        return __METHOD__ . $id;
+        return response('', Response::HTTP_NO_CONTENT);
     }
 }

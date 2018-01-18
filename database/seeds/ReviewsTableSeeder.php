@@ -12,9 +12,37 @@ class ReviewsTableSeeder extends Seeder
     public function run()
     {
 //        Note : Used for random seeding logic
-//        App\Review::create([
-//            'content' => sprintf('%s', str_random())
-//        ]);
+
+        // TODO: clear DB
+        DB::table('reviews')->delete();
+
+        // 3 for product_1
+        \App\Review::create(array(
+            'content' => 'pretty good stuff',
+            'product_id' => 1,
+        ));
+        \App\Review::create(array(
+            'content' => 'did not like',
+            'product_id' => 1,
+        ));
+        \App\Review::create(array(
+            'content' => 'not bad',
+            'product_id' => 1,
+        ));
+        // 1 for product_2
+        \App\Review::create(array(
+            'content' => 'HATE IT',
+            'product_id' => 2,
+        ));
+        // 2 for product_3
+        \App\Review::create(array(
+            'content' => 'LOVE IT',
+            'product_id' => 3,
+        ));
+        \App\Review::create(array(
+            'content' => 'what is this?',
+            'product_id' => 3,
+        ));
 
     }
 }
