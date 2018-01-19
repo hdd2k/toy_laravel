@@ -8,7 +8,8 @@ class DeleteReviewRequest
 {
     public function authorize()
     {
-        return false;
+        return true;
+//        return false;
     }
 
     public function rules()

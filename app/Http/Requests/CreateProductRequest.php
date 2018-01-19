@@ -9,7 +9,8 @@ class CreateProductRequest extends FormRequest
 {
     public function authorize()
     {
-        return false;
+//        return false;
+        return true;
     }
 
     public function rules()
