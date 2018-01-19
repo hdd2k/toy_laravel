@@ -14,7 +14,8 @@ class DatabaseSeeder extends Seeder
         // $this->call(UsersTableSeeder::class);
         $this->call(ProductsTableSeeder::class);
         $this->call(ReviewsTableSeeder::class);
+        $this->call(UsersTableSeeder::class);
 
-        $this->command->info('products and reviews seeding finished');
+        $this->command->info('products, reviews, users --- seeding finished');
     }
 }
