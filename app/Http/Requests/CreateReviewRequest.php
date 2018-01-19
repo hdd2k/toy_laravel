@@ -4,16 +4,9 @@
 namespace App\Http\Requests;
 
 use Core\ReviewDto;
-use Illuminate\Foundation\Http\FormRequest;
 
-class CreateReviewRequest extends FormRequest
+class CreateReviewRequest extends BaseRequest
 {
-    public function authorize()
-    {
-        return true;
-//        return false;
-    }
-
     public function rules()
     {
         return [

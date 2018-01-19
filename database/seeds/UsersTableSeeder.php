@@ -13,7 +13,7 @@ class UsersTableSeeder extends Seeder
         DB::table('users')->delete();
 
         // Create 1 user
-        $user_1 = \App\User::create(array(
+        \App\User::create(array(
             'name' => 'user_1',
             'email' => 'user@example.com',
             'password' => bcrypt('password')

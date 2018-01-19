@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Http\Requests\CreateReviewRequest;
+use App\Http\Requests\ListReviewRequest;
 use App\Http\Requests\UpdateReviewRequest;
 use App\Http\Requests\DeleteReviewRequest;
 use Core\ReviewCreator;
@@ -14,9 +15,10 @@ use Illuminate\Http\Response;
 
 class ReviewsController extends Controller
 {
-    public function listReviews()
+    public function listReviews(ListReviewRequest $request, ReviewRetriever $retriever)
     {
-        $reviews = Review::all();
+        $searchParamDto = $request->getListReviewSearchParamDto();
+        $reviews = $retriever->retrieveBySearchParam($searchParamDto);
 
         return response($reviews);
     }

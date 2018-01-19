@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Http\Requests\CreateProductRequest;
+use App\Http\Requests\ListProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Requests\DeleteProductRequest;
 use Core\ProductCreator;
@@ -14,9 +15,10 @@ use Illuminate\Http\Response;
 
 class ProductsController extends Controller
 {
-    public function listProducts()
+    public function listProducts(ListProductRequest $request, ProductRetriever $retriever)
     {
-        $products = Product::all();
+        $searchParamDto = $request->getListProductSearchParamDto();
+        $products = $retriever->retrieveBySearchParam($searchParamDto);
 
         return response($products);
 

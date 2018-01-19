@@ -3,16 +3,9 @@
 namespace App\Http\Requests;
 
 use Core\ProductDto;
-use Illuminate\Foundation\Http\FormRequest;
 
-class DeleteProductRequest extends FormRequest
+class DeleteProductRequest extends BaseRequest
 {
-    public function authorize()
-    {
-        return true;
-//        return false;
-    }
-
     public function rules()
     {
         return [

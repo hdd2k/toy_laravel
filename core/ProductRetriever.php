@@ -10,4 +10,26 @@ class ProductRetriever
     {
         return Product::firstOrFail($productId);
     }
+
+    public function retrieveAll()
+    {
+        return Product::all();
+    }
+
+    public function retrieveBySearchParam(ProductSearchParamDto $searchParamDto)
+    {
+        $query = Product::query();
+
+        $name = $searchParamDto->getName();
+        if (null !== $name) {
+            $query->where('name', 'LIKE', "%{$name}%");
+        }
+
+        return $query->paginate(
+            $searchParamDto->getSize(),
+            ['*'],
+            'page',
+            $searchParamDto->getPage()
+        );
+    }
 }

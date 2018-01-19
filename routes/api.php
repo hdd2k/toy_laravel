@@ -1,20 +1,10 @@
 <?php
 
-use Illuminate\Http\Request;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 
 // Product routes
-Route::group(['middleware' => 'auth.basic'], function() {
+
+Route::group(['middleware' => AuthenticateWithBasicAuth::class], function() {
     Route::get('products', 'ProductsController@listProducts');
     Route::get('products/{productId}', 'ProductsController@getProduct');
     Route::post('products', 'ProductsController@createProduct');
@@ -23,7 +13,7 @@ Route::group(['middleware' => 'auth.basic'], function() {
 });
 
 // Review routes
-Route::group(['middleware' => 'auth.basic'], function() {
+Route::group(['middleware' => AuthenticateWithBasicAuth::class], function() {
     Route::get('products/{productId}/reviews', 'ReviewsController@listReviews');
     Route::get('products/{productId}/reviews/{reviewId}', 'ReviewsController@getReview');
     Route::post('products/{productId}/reviews', 'ReviewsController@createReview');

@@ -4,14 +4,8 @@
 namespace App\Http\Requests;
 
 
-class UpdateReviewRequest
+class UpdateReviewRequest extends BaseRequest
 {
-    public function authorize()
-    {
-        return true;
-//        return false;
-    }
-
     public function rules()
     {
         return [
