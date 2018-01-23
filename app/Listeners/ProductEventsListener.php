@@ -3,21 +3,20 @@
 namespace App\Listeners;
 
 use App\Events\ProductCreatedEvent;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Log;
+use Psr\Log\LoggerInterface;
 
 class ProductEventsListener
 {
+    private $logger;
 
-    public function __construct()
+    public function __construct(LoggerInterface $logger)
     {
-        //
+        $this->logger = $logger;
     }
 
-    public function handle(ProductCreatedEvent $event)
+    public function handle(ProductCreatedEvent $event )
     {
-        $product = $event->product;
-        Log::info('Product created with name: '.$product->name);
+        $product = $event->getProduct();
+        $this->logger->info("Product created.", $product->toArray());
     }
 }

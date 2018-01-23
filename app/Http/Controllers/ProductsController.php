@@ -1,16 +1,19 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Events\ListProductsEvent;
+
 use App\Events\ProductCreatedEvent;
 use App\Http\Requests\CreateProductRequest;
+use App\Http\Requests\DownloadProductsRequest;
 use App\Http\Requests\ListProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Requests\DeleteProductRequest;
-use App\Jobs\ProcessListProduct;
+use App\Jobs\ProcessListProductJob;
 use Core\ProductCreator;
 use Core\ProductModifier;
 use Core\ProductRetriever;
+use Illuminate\Contracts\Bus\Dispatcher as JobDispatcher;
+use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 use \Illuminate\Support\Facades\DB;
 use Exception;
 use App\Product;
@@ -23,14 +26,19 @@ class ProductsController extends Controller
         $searchParamDto = $request->getListProductSearchParamDto();
         $products = $retriever->retrieveBySearchParam($searchParamDto);
 
-        // TODO: job (Queue Job)
-
-        event(new ListProductsEvent($products));
-
         return response($products);
     }
 
-    public function createProduct(CreateProductRequest $request, ProductCreator $creator)
+    public function downloadProducts(DownloadProductsRequest $request, ProductRetriever $retriever, JobDispatcher $jobDispatcher)
+    {
+        $searchParamDto = $request->getListProductSearchParamDto();
+        $products = $retriever->retrieveCollectionBySearchParam($searchParamDto);
+        $jobDispatcher->dispatch(new ProcessListProductJob($products, $request->user()));
+
+        return response()->json(['message' => '작업이 예약되었습니다. 완료되면 이메일로 알려드립니다.']);
+    }
+
+    public function createProduct(CreateProductRequest $request, ProductCreator $creator, EventDispatcher $eventDispatcher)
     {
         $dto = $request->getProductDto();
 
@@ -45,7 +53,7 @@ class ProductsController extends Controller
             throw $e;
         }
 
-        event(new ProductCreatedEvent($product));
+        $eventDispatcher->dispatch(new ProductCreatedEvent($product));
 
         return response($product, Response::HTTP_CREATED);
     }

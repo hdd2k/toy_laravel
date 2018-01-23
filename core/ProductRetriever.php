@@ -32,4 +32,16 @@ class ProductRetriever
             $searchParamDto->getPage()
         );
     }
+
+    public function retrieveCollectionBySearchParam(ProductSearchParamDto $searchParamDto)
+    {
+        $query = Product::query();
+
+        $name = $searchParamDto->getName();
+        if (null !== $name) {
+            $query->where('name', 'LIKE', "%{$name}%");
+        }
+
+        return $query->get();
+    }
 }

@@ -4,14 +4,12 @@ use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 
 // Product routes
 Route::group(['middleware' => AuthenticateWithBasicAuth::class], function() {
-
+    Route::get('products/download', 'ProductsController@downloadProducts');
     Route::get('products', 'ProductsController@listProducts');
     Route::get('products/{productId}', 'ProductsController@getProduct');
     Route::post('products', 'ProductsController@createProduct');
     Route::put('products/{productId}', 'ProductsController@updateProduct');
     Route::delete('products/{productId}', 'ProductsController@deleteProduct');
-
-    Route::get('products/download', 'ProductsController@downloadProducts');
 });
 
 // TO
