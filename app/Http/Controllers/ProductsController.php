@@ -1,10 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Events\ListProductsEvent;
+use App\Events\ProductCreatedEvent;
 use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\ListProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Requests\DeleteProductRequest;
+use App\Jobs\ProcessListProduct;
 use Core\ProductCreator;
 use Core\ProductModifier;
 use Core\ProductRetriever;
@@ -20,8 +23,11 @@ class ProductsController extends Controller
         $searchParamDto = $request->getListProductSearchParamDto();
         $products = $retriever->retrieveBySearchParam($searchParamDto);
 
-        return response($products);
+        // TODO: job (Queue Job)
 
+        event(new ListProductsEvent($products));
+
+        return response($products);
     }
 
     public function createProduct(CreateProductRequest $request, ProductCreator $creator)
@@ -33,10 +39,13 @@ class ProductsController extends Controller
             $product = $creator->createProduct($dto);
             $product->save();
             DB::commit();
+
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
+
+        event(new ProductCreatedEvent($product));
 
         return response($product, Response::HTTP_CREATED);
     }
